@@ -1,0 +1,61 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Votre Panier{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <br><br>
+        <h1>Votre panier</h1>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Produit</th>
+                    <th>Prix</th>
+                    <th>Quantité</th>
+                    <th>Total</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for element in dataPanier %}
+                    {% set total1 =  element.quantite * element.produit.price %}
+                    
+                    <tr>
+                        
+                        <td><img src="{{ asset('images/' ~ element.produit.image ) }}" width="30px"></td>
+                        <td>{{ element.produit.name }}</td>
+                        <td class="text-start">{{ element.produit.price |number_format(2, ',', '.') }} €</td>
+                        <td>
+                            <a href="{{ path("remove", {id: element.produit.id}) }}" class="btn btn-light"><span style="font-weight:bold;">  -  </span></a>                           
+                                {{ element.quantite }} 
+                            <a href="{{ path("add", {id: element.produit.id}) }}" class="btn btn-light" ><span style="font-weight:bold;">  +  </span></a>
+                        </td>
+                        <td class="text-start">{{ total1 |number_format(2, ',', '.') }} €</td>
+                        <td>
+                            <a href="{{ path('delete', {id: element.produit.id}) }}" class="btn btn-danger"><span style="font-weight:bold;">  x  </span></a>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center">Votre panier est vide</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+
+            <tfoot>
+                <tr>
+                    {#  #}
+                    <td colspan="4">Total</td>
+                    <td class="text-start">{{ total |number_format(2, ',', '.') }} €</td>
+                    <td>
+                        <a href="{{ path('checkout') }}" class="btn btn-success"> Payer </a>                        
+                        <a href="{{ path('vider') }}" class="btn btn-danger"> Vider le panier </a>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+{% endblock %}
