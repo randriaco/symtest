@@ -15,6 +15,10 @@ use Symfony\Component\HttpFoundation\Session\SessionInterface;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
+
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Email;
+
 class CartController extends AbstractController
 {
     // ---------------PANIER-----------------------
@@ -160,7 +164,7 @@ class CartController extends AbstractController
 				'price_data' => 
 				[
 					'currency' => 'eur',
-					'unit_amount' => $product->getPrice(),
+					'unit_amount' => $product->getPrice() * 100,
 					'product_data' => 
 					[
 						'name' => $product->getName(),
@@ -184,8 +188,23 @@ class CartController extends AbstractController
     }
 
     #[Route('/success', name: 'success')]
-    public function successUrl(): Response
+    public function successUrl(SessionInterface $session, MailerInterface $mailer): Response
     {
+        // Vider le panier
+        $session->set('panier', []);
+
+        // Créer l'email
+        $email = (new Email())
+            ->from('no-reply@yourdomain.com')
+            ->to('ralaydev@gmail.com')
+            ->subject('Confirmation de paiement')
+            ->text('Merci pour votre paiement. Votre commande a été acceptée.')
+            ->html('<p>Merci pour votre paiement. Votre commande a été acceptée.</p>');
+
+        // Envoyer l'email
+        $mailer->send($email);
+
+        // Afficher la page de succès
         return $this->render('cart/success.html.twig', []);
     }
 
