@@ -32,7 +32,7 @@ class ContactController extends AbstractController
             
             // Envoi de l'email
             $email = (new Email())
-                ->from($contact->getEmail())
+                ->from('contact@restolico.online')
                 ->to('ralaydev@gmail.com')
                 ->subject($contact->getSubject())
                 ->text('Sender : '.$contact->getEmail().\PHP_EOL.$contact->getMessage());
